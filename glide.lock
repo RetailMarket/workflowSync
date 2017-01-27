@@ -1,16 +1,14 @@
-hash: c31a2b4fd8f54ddbc2e63075adbcc3f020b149f177b59404382793c089b66925
-updated: 2017-01-27T08:40:19.365295253+05:30
+hash: 82642053137bb5fdbd52ff5ddb3381567be4356f1864865eb7ffb2ca0accd015
+updated: 2017-01-27T13:51:32.229210123+05:30
 imports:
-- name: github.com/gin-gonic/gin
-  version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
 - name: github.com/golang/protobuf
   version: 8ee79997227bf9b34611aee7946ae64735e6fd93
   subpackages:
   - proto
 - name: github.com/RetailMarket/priceManagerClient
-  version: 481fbc026cd0097e348fdd5eed01175b4959824b
+  version: 91205d292f832837a234aca6d0ab5c099ce3d275
 - name: github.com/RetailMarket/workFlowClient
-  version: 870f1f04fed40c24f878cf21c5aba45e5a494426
+  version: 9896562e92fe077c1322fdc42639183a68040d47
 - name: golang.org/x/net
   version: f2499483f923065a842d38eb4c7f1927e6fc6e6d
   subpackages:

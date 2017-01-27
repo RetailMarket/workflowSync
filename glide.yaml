@@ -1,4 +1,3 @@
-package: Retail/priceSync
+package: Retail/workflowSync
 import:
-- package: github.com/gin-gonic/gin
 - package: github.com/RetailMarket/workFlowClient
