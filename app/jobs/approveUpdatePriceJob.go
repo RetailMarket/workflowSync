@@ -7,6 +7,7 @@ import (
 	workflow "github.com/RetailMarket/workFlowClient"
 	priceManager "github.com/RetailMarket/priceManagerClient"
 	"golang.org/x/net/context"
+	"fmt"
 )
 
 func ApproveUpdatePriceJob() {
@@ -27,13 +28,13 @@ func processApproval() {
 		log.Printf("Processing records : %v\n", workflowResponse.GetProducts())
 
 		records := workflowResponse.GetProducts()
-		changeStatus(records);
+		notifyServices(records);
 	}
 }
 
-func changeStatus(records []*workflow.Product) {
+func notifyServices(records []*workflow.Product) {
 	if (len(records) != 0) {
-		err := updateStatusInPriceManager(records);
+		err := notifyPriceManagerService(records);
 		if (err != nil) {
 			log.Printf("Unable to change status to confirmed for entries in priceManager service %v\n Error: %v", records, err)
 		} else {
@@ -45,27 +46,30 @@ func changeStatus(records []*workflow.Product) {
 	}
 }
 
-func createStatusUpdateRequestForPriceManagerService(records []*workflow.Product) *priceManager.ChangeStatusRequest {
-	request := &priceManager.ChangeStatusRequest{}
+func createNotifyRequestForPriceManagerService(records []*workflow.Product) *priceManager.NotifyRequest {
+	request := &priceManager.NotifyRequest{}
 	for i := 0; i < len(records); i++ {
-		priceObj := priceManager.ProductEntry{
+		priceObj := priceManager.Entry{
 			ProductId: records[i].GetProductId(),
 			Version: records[i].GetVersion()}
-		request.Products = append(request.Products, &priceObj)
+		request.Entries = append(request.Entries, &priceObj)
 	}
 	return request
 }
 
-func updateStatusInPriceManager(records []*workflow.Product) error {
-	log.Println("Updating status to completed in price manager service")
-	priceRequest := createStatusUpdateRequestForPriceManagerService(records);
-	_, err := clients.PriceManagerClient.ChangeStatusToCompleted(context.Background(), priceRequest)
+func notifyPriceManagerService(records []*workflow.Product) error {
+	log.Println("notifying price manager service")
+	notifyRequest := createNotifyRequestForPriceManagerService(records);
+	response, err := clients.PriceManagerClient.NotifySuccessfullyProcessed(context.Background(), notifyRequest)
+	fmt.Print(response)
+	//log.Printf("Price Service %s", response.Message)
 	return err;
 }
 
 func updateStatusInWorkflow(records []*workflow.Product) error {
 	log.Println("Updating status to completed in workflow service")
 	request := &workflow.ProductsRequest{Products:records}
-	_, err := clients.WorkflowClient.UpdateStatusToCompleted(context.Background(), request)
+	response, err := clients.WorkflowClient.UpdateStatusToCompleted(context.Background(), request)
+	log.Printf("Price Service %s", response.Message)
 	return err;
 }
