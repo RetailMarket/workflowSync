@@ -1,10 +1,12 @@
 hash: 82642053137bb5fdbd52ff5ddb3381567be4356f1864865eb7ffb2ca0accd015
-updated: 2017-01-27T15:36:54.415384061+05:30
+updated: 2017-01-30T11:07:25.572459559+05:30
 imports:
 - name: github.com/golang/protobuf
   version: 8ee79997227bf9b34611aee7946ae64735e6fd93
   subpackages:
   - proto
+- name: github.com/jasonlvhit/gocron
+  version: 42a5804d37aa0b9239b265e894a16b8edbf52d54
 - name: github.com/RetailMarket/priceManagerClient
   version: 25b129dfa5fef887cdacfa13f81ea5245ef49db2
 - name: github.com/RetailMarket/workFlowClient

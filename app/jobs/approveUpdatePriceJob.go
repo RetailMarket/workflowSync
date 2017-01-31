@@ -1,7 +1,6 @@
 package jobs
 
 import (
-	"time"
 	"log"
 	"Retail/workflowSync/clients"
 	workflow "github.com/RetailMarket/workFlowClient"
@@ -11,25 +10,18 @@ import (
 )
 
 func ApproveUpdatePriceJob() {
-	processApproval();
-	time.Sleep(time.Second * 100000)
-}
+	log.Println("Fetching records with pending approval...")
 
-func processApproval() {
-	for range time.Tick(time.Second * 5) {
-		log.Println("Fetching records with pending approval...")
+	workflowResponse, err := clients.WorkflowClient.GetRecordsPendingForApproval(context.Background(), &workflow.GetProductsRequest{})
 
-		workflowResponse, err := clients.WorkflowClient.GetRecordsPendingForApproval(context.Background(), &workflow.GetProductsRequest{})
-
-		if (err != nil) {
-			log.Printf("Failed while fetching price update records\nError: %v", err)
-			continue
-		}
-		log.Printf("Processing records : %v\n", workflowResponse.GetProducts())
-
-		records := workflowResponse.GetProducts()
-		notifyServices(records);
+	if (err != nil) {
+		log.Printf("Failed while fetching price update records\nError: %v", err)
+		return
 	}
+	log.Printf("Processing records : %v\n", workflowResponse.GetProducts())
+
+	records := workflowResponse.GetProducts()
+	notifyServices(records);
 }
 
 func notifyServices(records []*workflow.Product) {
@@ -62,7 +54,6 @@ func notifyPriceManagerService(records []*workflow.Product) error {
 	notifyRequest := createNotifyRequestForPriceManagerService(records);
 	response, err := clients.PriceManagerClient.NotifySuccessfullyProcessed(context.Background(), notifyRequest)
 	fmt.Print(response)
-	//log.Printf("Price Service %s", response.Message)
 	return err;
 }
 
