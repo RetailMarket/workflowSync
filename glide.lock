@@ -1,5 +1,5 @@
 hash: 82642053137bb5fdbd52ff5ddb3381567be4356f1864865eb7ffb2ca0accd015
-updated: 2017-01-30T11:07:25.572459559+05:30
+updated: 2017-02-01T14:46:36.225154686+05:30
 imports:
 - name: github.com/golang/protobuf
   version: 8ee79997227bf9b34611aee7946ae64735e6fd93
@@ -8,9 +8,9 @@ imports:
 - name: github.com/jasonlvhit/gocron
   version: 42a5804d37aa0b9239b265e894a16b8edbf52d54
 - name: github.com/RetailMarket/priceManagerClient
-  version: 25b129dfa5fef887cdacfa13f81ea5245ef49db2
+  version: 91b04fbb7776c5c14482c315538afe910d726608
 - name: github.com/RetailMarket/workFlowClient
-  version: 9896562e92fe077c1322fdc42639183a68040d47
+  version: 7ae84122d10578da9da92dc57acddbcc5d5334c5
 - name: golang.org/x/net
   version: f2499483f923065a842d38eb4c7f1927e6fc6e6d
   subpackages:
@@ -22,7 +22,7 @@ imports:
   - lex/httplex
   - trace
 - name: google.golang.org/grpc
-  version: 50955793b0183f9de69bd78e2ec251cf20aab121
+  version: 21f8ed309495401e6fd79b3a9fd549582aed1b4c
   subpackages:
   - codes
   - credentials
