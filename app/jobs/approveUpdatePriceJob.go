@@ -6,25 +6,26 @@ import (
 	workflow "github.com/RetailMarket/workFlowClient"
 	priceManager "github.com/RetailMarket/priceManagerClient"
 	"golang.org/x/net/context"
+	"encoding/json"
 )
 
 func ApproveUpdatePriceJob() {
 	log.Println("Fetching records with pending approval...")
 
-	workflowResponse, err := clients.WorkflowClient.PendingRecords(context.Background(), &workflow.Request{})
+	records, err := clients.WorkflowClient.PendingRecords(context.Background(), &workflow.Request{})
 
 	if (err != nil) {
 		log.Printf("Failed while fetching price update records\nError: %v", err)
 		return
 	}
-	entries := workflowResponse.GetEntries()
+	entries := records.GetEntries()
 	log.Printf("Processing records : %v\n", entries)
 
-	notifyServices(entries);
+	notifyServices(records);
 }
 
-func notifyServices(records []*workflow.Entry) {
-	if (len(records) != 0) {
+func notifyServices(records *workflow.Records) {
+	if (len(records.GetEntries()) != 0) {
 		err := notifyPriceManagerService(records);
 		if (err != nil) {
 			log.Printf("Unable to change status to confirmed for entries in priceManager service %v\n Error: %v", records, err)
@@ -37,29 +38,22 @@ func notifyServices(records []*workflow.Entry) {
 	}
 }
 
-func createNotifyRequestForPriceManagerService(records []*workflow.Entry) *priceManager.Records {
-	request := &priceManager.Records{}
-	for i := 0; i < len(records); i++ {
-		priceObj := priceManager.Entry{
-			ProductId: records[i].GetProductId(),
-			Version: records[i].GetVersion()}
-		request.Entries = append(request.Entries, &priceObj)
-	}
-	return request
-}
-
-func notifyPriceManagerService(records []*workflow.Entry) error {
+func notifyPriceManagerService(records *workflow.Records) error {
 	log.Println("notifying price manager service")
-	notifyRequest := createNotifyRequestForPriceManagerService(records);
+	recordsInBytes, err := json.Marshal(records)
+	if (err != nil) {
+		log.Printf("Unable to marshal records %v", records.Entries)
+	}
+	notifyRequest := &priceManager.Records{}
+	json.Unmarshal(recordsInBytes, notifyRequest)
 	response, err := clients.PriceManagerClient.NotifyRecordsProcessed(context.Background(), notifyRequest)
-	log.Printf("priceManager response: %v", response.Message)
+	log.Printf("priceManager response: %v", response)
 	return err;
 }
 
-func notifyWorkflowService(records []*workflow.Entry) error {
+func notifyWorkflowService(records *workflow.Records) error {
 	log.Println("Updating status to completed in workflow service")
-	request := &workflow.Records{Entries:records}
-	response, err := clients.WorkflowClient.NotifyRecordsProcessed(context.Background(), request)
-	log.Printf("Workflow Service %s", response.Message)
+	response, err := clients.WorkflowClient.NotifyRecordsProcessed(context.Background(), records)
+	log.Printf("Workflow Service %s", response)
 	return err;
 }
