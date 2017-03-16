@@ -2,7 +2,7 @@ package main
 
 import (
 	clients "Retail/workflowSync/clients"
-	"Retail/workflowSync/app/jobs"
+	"Retail/workflowSync/jobs"
 	"github.com/jasonlvhit/gocron"
 )
 
